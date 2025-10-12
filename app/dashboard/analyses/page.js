@@ -109,7 +109,7 @@ export default function Analyses() {
               ) : (
                 <div className="space-y-3">
                   <p className="text-sm text-zinc-500">
-                    You've reached your free tier limit of 5 analyses.
+                    You&apos;ve reached your free tier limit of 5 analyses.
                   </p>
                   <Button
                     disabled

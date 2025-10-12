@@ -109,7 +109,7 @@ export default function NewAnalysis() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-zinc-400">
-              You've used all 5 of your free analyses this month. Upgrade to Pro for unlimited analyses.
+              You&apos;ve used all 5 of your free analyses this month. Upgrade to Pro for unlimited analyses.
             </p>
             <div className="flex gap-4">
               <Button

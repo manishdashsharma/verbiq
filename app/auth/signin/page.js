@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { IconBrandGoogle, IconBrandGithub } from '@tabler/icons-react'
+import Link from 'next/link'
 
 export default function SignIn() {
   const router = useRouter()
@@ -73,12 +74,12 @@ export default function SignIn() {
           </Button>
 
           <div className="text-center">
-            <a
+            <Link
               href="/"
               className="text-zinc-400 hover:text-white transition-colors text-sm"
             >
               ← Back to home
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

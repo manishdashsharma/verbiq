@@ -140,7 +140,7 @@ export default function Dashboard() {
                 <div>
                   <h3 className="text-sm font-medium text-white">Upgrade for More</h3>
                   <p className="text-xs text-zinc-400 mt-1">
-                    You've reached your free tier limit. Upgrade to Pro for unlimited analyses.
+                    You&apos;ve reached your free tier limit. Upgrade to Pro for unlimited analyses.
                   </p>
                 </div>
               </div>
