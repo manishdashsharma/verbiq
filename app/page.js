@@ -1,6 +1,8 @@
 'use client'
 
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { Button } from "@/components/ui/button";
+import { Cover } from "@/components/ui/cover";
 import { Meteors } from "@/components/ui/meteors";
 import {
   IconFileText,
@@ -41,6 +43,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
+      <BackgroundBeamsWithCollision>
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
@@ -48,7 +51,7 @@ export default function Home() {
             <br />
             <span className="text-green-600">Transcripts</span> into
             <br />
-            Actionable Insights
+            <Cover>Actionable Insights</Cover>
           </h1>
           <p className="text-xl text-zinc-400 mb-8 max-w-2xl mx-auto leading-relaxed">
             Analyze your meeting recordings and transcripts with AI-powered intelligence.
@@ -64,6 +67,7 @@ export default function Home() {
           </Button>
         </div>
       </section>
+      </BackgroundBeamsWithCollision>
 
       {/* Features Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
