@@ -2,7 +2,7 @@
 
 A powerful SaaS platform that transforms lengthy meeting recordings into actionable insights. VerbIQ uses advanced AI to extract key decisions, action items, and sentiment analysis from your team discussions, helping you turn conversations into concrete next steps.
 
-![VerbIQ Landing Page]()
+![VerbIQ Landing Page](https://github.com/manishdashsharma/verbiq/blob/main/public/verbiq.png)
 
 ## 🚀 Features
 
