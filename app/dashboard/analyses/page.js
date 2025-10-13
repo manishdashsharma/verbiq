@@ -20,15 +20,46 @@ export default function Analyses() {
   const [analyses, setAnalyses] = useState([])
 
   useEffect(() => {
-    // In a real app, you would fetch analyses from the database
-    // For now, we'll show an empty state or mock data
-    setAnalyses([])
+    fetchAnalyses()
   }, [])
+
+  // Add event listener to refresh analyses when new one is created
+  useEffect(() => {
+    const handleRefreshAnalyses = () => {
+      console.log('🔄 [ANALYSES] Refreshing analyses list...')
+      fetchAnalyses()
+    }
+
+    window.addEventListener('refreshAnalyses', handleRefreshAnalyses)
+    return () => window.removeEventListener('refreshAnalyses', handleRefreshAnalyses)
+  }, [])
+
+  const fetchAnalyses = async () => {
+    try {
+      console.log('📊 [ANALYSES] Fetching analyses list...')
+      const response = await fetch('/api/analyses', {
+        credentials: 'include'
+      })
+      const data = await response.json()
+
+      if (response.ok) {
+        console.log('✅ [ANALYSES] Fetched', data.analyses.length, 'analyses')
+        console.log('📋 [ANALYSES] Analyses:', data.analyses.map(a => ({
+          id: a._id,
+          title: a.title,
+          created: new Date(a.createdAt).toLocaleString()
+        })))
+        setAnalyses(data.analyses)
+      }
+    } catch (error) {
+      console.error('Failed to fetch analyses:', error)
+    }
+  }
 
   const handleNewAnalysis = () => {
     const analysesUsed = session?.user?.analysesUsed || 0
     if (analysesUsed < 5) {
-      router.push('/dashboard/new')
+      router.push('/dashboard/upload')
     }
   }
 
@@ -126,7 +157,7 @@ export default function Analyses() {
       ) : (
         <div className="space-y-4">
           {analyses.map((analysis) => (
-            <Card key={analysis.id} className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
+            <Card key={analysis._id} className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -136,21 +167,9 @@ export default function Analyses() {
                           {analysis.title}
                         </h3>
                         <div className="flex items-center space-x-4 text-sm text-zinc-400">
-                          {analysis.date && (
-                            <div className="flex items-center space-x-1">
-                              <IconCalendar className="h-4 w-4" />
-                              <span>{analysis.date}</span>
-                            </div>
-                          )}
-                          {analysis.participants && (
-                            <div className="flex items-center space-x-1">
-                              <IconUsers className="h-4 w-4" />
-                              <span>{analysis.participants}</span>
-                            </div>
-                          )}
                           <div className="flex items-center space-x-1">
-                            <IconClock className="h-4 w-4" />
-                            <span>{analysis.createdAt}</span>
+                            <IconCalendar className="h-4 w-4" />
+                            <span>{new Date(analysis.createdAt).toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
@@ -165,9 +184,9 @@ export default function Analyses() {
                       </div>
                     </div>
 
-                    {analysis.summary && (
+                    {analysis.analysis?.summary && (
                       <p className="text-zinc-400 text-sm mb-4 line-clamp-2">
-                        {analysis.summary}
+                        {analysis.analysis.summary}
                       </p>
                     )}
 
@@ -175,7 +194,7 @@ export default function Analyses() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.push(`/dashboard/analyses/${analysis.id}`)}
+                        onClick={() => router.push(`/dashboard/analyses/${analysis._id}`)}
                         className="border-zinc-700 text-white hover:bg-zinc-800"
                       >
                         <IconEye className="mr-2 h-4 w-4" />

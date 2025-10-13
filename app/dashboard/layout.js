@@ -36,9 +36,41 @@ export default function DashboardLayout({ children }) {
       return
     }
     if (session?.user) {
-      setAnalysesUsed(session.user.analysesUsed || 0)
+      fetchUserStats()
     }
   }, [session, status, router])
+
+  const fetchUserStats = async () => {
+    try {
+      console.log('🔄 [LAYOUT] Fetching fresh user stats...')
+      const response = await fetch('/api/user/stats', {
+        credentials: 'include'
+      })
+      const data = await response.json()
+      if (response.ok) {
+        console.log('✅ [LAYOUT] Updated usage count:', data.stats.analysesUsed)
+        setAnalysesUsed(data.stats.analysesUsed)
+      } else {
+        // Fallback to session data if API fails
+        setAnalysesUsed(session?.user?.analysesUsed || 0)
+      }
+    } catch (error) {
+      console.error('Failed to fetch user stats:', error)
+      // Fallback to session data if API fails
+      setAnalysesUsed(session?.user?.analysesUsed || 0)
+    }
+  }
+
+  // Add event listener for custom refresh event
+  useEffect(() => {
+    const handleRefreshStats = () => {
+      console.log('📡 [LAYOUT] Received refresh stats event')
+      fetchUserStats()
+    }
+
+    window.addEventListener('refreshUserStats', handleRefreshStats)
+    return () => window.removeEventListener('refreshUserStats', handleRefreshStats)
+  }, [session])
 
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' })
@@ -180,14 +212,14 @@ export default function DashboardLayout({ children }) {
               <h2 className="text-lg font-semibold text-white">
                 {pathname === '/dashboard' && 'Dashboard'}
                 {pathname === '/dashboard/analyses' && 'Analyses'}
-                {pathname === '/dashboard/new' && 'New Analysis'}
+                {pathname === '/dashboard/upload' && 'Upload Transcript'}
                 {pathname === '/dashboard/settings' && 'Settings'}
               </h2>
             </div>
             <div className="flex items-center space-x-4">
               {analysesUsed < 5 && (
                 <Button
-                  onClick={() => router.push('/dashboard/new')}
+                  onClick={() => router.push('/dashboard/upload')}
                   className="bg-green-600 hover:bg-green-700 text-black font-semibold"
                 >
                   <IconPlus className="mr-2 h-4 w-4" />

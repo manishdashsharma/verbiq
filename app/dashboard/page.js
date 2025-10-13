@@ -21,21 +21,55 @@ export default function Dashboard() {
     remainingAnalyses: 5,
     totalMeetings: 0
   })
+  const [recentAnalyses, setRecentAnalyses] = useState([])
 
   useEffect(() => {
     if (session?.user) {
-      const used = session.user.analysesUsed || 0
+      fetchDashboardData()
+    }
+  }, [session])
+
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch user stats
+      const statsResponse = await fetch('/api/user/stats', {
+        credentials: 'include'
+      })
+      const statsData = await statsResponse.json()
+
+      if (statsResponse.ok) {
+        setStats({
+          totalAnalyses: statsData.stats.analysesUsed,
+          remainingAnalyses: statsData.stats.remaining,
+          totalMeetings: statsData.stats.analysesUsed
+        })
+      }
+
+      // Fetch recent analyses (limit to 3 for dashboard)
+      const analysesResponse = await fetch('/api/analyses?limit=3', {
+        credentials: 'include'
+      })
+      const analysesData = await analysesResponse.json()
+
+      if (analysesResponse.ok) {
+        console.log('📊 [DASHBOARD] Fetched', analysesData.analyses.length, 'recent analyses')
+        setRecentAnalyses(analysesData.analyses)
+      }
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error)
+      // Fallback to session data
+      const used = session?.user?.analysesUsed || 0
       setStats({
         totalAnalyses: used,
         remainingAnalyses: 5 - used,
         totalMeetings: used
       })
     }
-  }, [session])
+  }
 
   const handleNewAnalysis = () => {
     if (stats.remainingAnalyses > 0) {
-      router.push('/dashboard/new')
+      router.push('/dashboard/upload')
     }
   }
 
@@ -162,7 +196,7 @@ export default function Dashboard() {
           <CardTitle className="text-xl text-white">Recent Analyses</CardTitle>
         </CardHeader>
         <CardContent>
-          {stats.totalAnalyses === 0 ? (
+          {recentAnalyses.length === 0 ? (
             <div className="text-center py-8">
               <IconFileText className="h-12 w-12 text-zinc-600 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-white mb-2">No analyses yet</h3>
@@ -179,8 +213,38 @@ export default function Dashboard() {
               </Button>
             </div>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-zinc-400">Your recent analyses will appear here.</p>
+            <div className="space-y-4">
+              {recentAnalyses.map((analysis) => (
+                <div key={analysis._id} className="p-4 bg-zinc-800 rounded-lg border border-zinc-700 hover:border-zinc-600 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-white font-medium">{analysis.title}</h3>
+                    <span className="text-xs text-zinc-400">
+                      {new Date(analysis.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  {analysis.analysis?.summary && (
+                    <p className="text-zinc-400 text-sm mb-3 line-clamp-2">
+                      {analysis.analysis.summary}
+                    </p>
+                  )}
+                  <Button
+                    size="sm"
+                    onClick={() => router.push(`/dashboard/analyses/${analysis._id}`)}
+                    className="bg-green-600 hover:bg-green-700 text-black font-medium"
+                  >
+                    View Analysis
+                  </Button>
+                </div>
+              ))}
+              <div className="text-center pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => router.push('/dashboard/analyses')}
+                  className="border-zinc-700 text-white hover:bg-zinc-800"
+                >
+                  View All Analyses
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>

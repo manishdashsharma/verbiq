@@ -4,7 +4,7 @@ import GitHubProvider from 'next-auth/providers/github'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -25,13 +25,10 @@ const handler = NextAuth({
       try {
         await connectDB()
 
-        
         const existingUser = await User.findOne({ email: user.email })
 
         if (existingUser) {
-          
           if (!existingUser.providers.includes(account.provider)) {
-      
             existingUser.providers.push(account.provider)
             await existingUser.save()
           }
@@ -81,6 +78,8 @@ const handler = NextAuth({
   session: {
     strategy: 'jwt',
   }
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }
