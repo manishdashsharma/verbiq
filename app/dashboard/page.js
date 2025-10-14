@@ -10,7 +10,9 @@ import {
   IconClock,
   IconUsers,
   IconPlus,
-  IconTrendingUp
+  IconTrendingUp,
+  IconCircleCheck,
+  IconStar
 } from '@tabler/icons-react'
 
 export default function Dashboard() {
@@ -45,8 +47,8 @@ export default function Dashboard() {
         })
       }
 
-      // Fetch recent analyses (limit to 3 for dashboard)
-      const analysesResponse = await fetch('/api/analyses?limit=3', {
+      // Fetch recent analyses (limit to 2 for dashboard)
+      const analysesResponse = await fetch('/api/analyses?limit=2', {
         credentials: 'include'
       })
       const analysesData = await analysesResponse.json()
@@ -216,17 +218,63 @@ export default function Dashboard() {
             <div className="space-y-4">
               {recentAnalyses.map((analysis) => (
                 <div key={analysis._id} className="p-4 bg-zinc-800 rounded-lg border border-zinc-700 hover:border-zinc-600 transition-colors">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-white font-medium">{analysis.title}</h3>
-                    <span className="text-xs text-zinc-400">
-                      {new Date(analysis.createdAt).toLocaleDateString()}
-                    </span>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-white font-medium mb-1">{analysis.title}</h3>
+                      <div className="flex items-center space-x-3 text-xs text-zinc-400">
+                        <span>{new Date(analysis.createdAt).toLocaleDateString()}</span>
+                        {analysis.quickStats?.duration && analysis.quickStats.duration !== 'Unknown' && (
+                          <span>• {analysis.quickStats.duration} min</span>
+                        )}
+                        {analysis.quickStats?.participantCount && (
+                          <span>• {analysis.quickStats.participantCount} participants</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {analysis.quickStats?.meetingEffectiveness && (
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          analysis.quickStats.meetingEffectiveness === 'high'
+                            ? 'bg-green-600/20 text-green-400'
+                            : analysis.quickStats.meetingEffectiveness === 'medium'
+                            ? 'bg-yellow-600/20 text-yellow-400'
+                            : 'bg-zinc-600/20 text-zinc-400'
+                        }`}>
+                          {analysis.quickStats.meetingEffectiveness}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  {analysis.analysis?.summary && (
+
+                  {analysis.summary && (
                     <p className="text-zinc-400 text-sm mb-3 line-clamp-2">
-                      {analysis.analysis.summary}
+                      {analysis.summary}
                     </p>
                   )}
+
+                  {/* Quick metrics bar */}
+                  {analysis.quickStats && (
+                    <div className="flex items-center space-x-4 mb-3 text-xs">
+                      <div className="flex items-center space-x-1">
+                        <IconCircleCheck className="h-3 w-3 text-purple-400" />
+                        <span className="text-zinc-400">{analysis.quickStats.actionItemCount} actions</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <div className={`w-2 h-2 rounded-full ${
+                          analysis.quickStats.sentiment === 'positive' ? 'bg-green-400' :
+                          analysis.quickStats.sentiment === 'negative' ? 'bg-red-400' : 'bg-yellow-400'
+                        }`}></div>
+                        <span className="text-zinc-400 capitalize">{analysis.quickStats.sentiment}</span>
+                      </div>
+                      {analysis.quickStats.collaborationScore && (
+                        <div className="flex items-center space-x-1">
+                          <IconStar className="h-3 w-3 text-orange-400" />
+                          <span className="text-zinc-400">{analysis.quickStats.collaborationScore}/10</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <Button
                     size="sm"
                     onClick={() => router.push(`/dashboard/analyses/${analysis._id}`)}

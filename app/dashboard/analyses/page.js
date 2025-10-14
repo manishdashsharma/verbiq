@@ -11,7 +11,13 @@ import {
   IconCalendar,
   IconUsers,
   IconEye,
-  IconClock
+  IconClock,
+  IconCircleCheck,
+  IconMoodHappy,
+  IconMoodSad,
+  IconMoodEmpty,
+  IconStar,
+  IconTarget
 } from '@tabler/icons-react'
 
 export default function Analyses() {
@@ -156,14 +162,31 @@ export default function Analyses() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {analyses.map((analysis) => (
-            <Card key={analysis._id} className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="text-lg font-semibold text-white mb-1">
+          {analyses.map((analysis) => {
+            const getSentimentIcon = (sentiment) => {
+              switch (sentiment) {
+                case 'positive': return <IconMoodHappy className="h-4 w-4 text-green-400" />
+                case 'negative': return <IconMoodSad className="h-4 w-4 text-red-400" />
+                default: return <IconMoodEmpty className="h-4 w-4 text-yellow-400" />
+              }
+            }
+
+            const getSentimentColor = (sentiment) => {
+              switch (sentiment) {
+                case 'positive': return 'text-green-400'
+                case 'negative': return 'text-red-400'
+                default: return 'text-yellow-400'
+              }
+            }
+
+            return (
+              <Card key={analysis._id} className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-white mb-2">
                           {analysis.title}
                         </h3>
                         <div className="flex items-center space-x-4 text-sm text-zinc-400">
@@ -171,9 +194,26 @@ export default function Analyses() {
                             <IconCalendar className="h-4 w-4" />
                             <span>{new Date(analysis.createdAt).toLocaleDateString()}</span>
                           </div>
+                          {analysis.quickStats?.duration && analysis.quickStats.duration !== 'Unknown' && (
+                            <div className="flex items-center space-x-1">
+                              <IconClock className="h-4 w-4" />
+                              <span>{analysis.quickStats.duration} min</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
+                        {analysis.quickStats?.meetingEffectiveness && (
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            analysis.quickStats.meetingEffectiveness === 'high'
+                              ? 'bg-green-600/20 text-green-400 border border-green-600/30'
+                              : analysis.quickStats.meetingEffectiveness === 'medium'
+                              ? 'bg-yellow-600/20 text-yellow-400 border border-yellow-600/30'
+                              : 'bg-zinc-600/20 text-zinc-400 border border-zinc-600/30'
+                          }`}>
+                            {analysis.quickStats.meetingEffectiveness} effectiveness
+                          </span>
+                        )}
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           analysis.status === 'completed'
                             ? 'bg-green-600/20 text-green-400 border border-green-600/30'
@@ -184,28 +224,105 @@ export default function Analyses() {
                       </div>
                     </div>
 
-                    {analysis.analysis?.summary && (
-                      <p className="text-zinc-400 text-sm mb-4 line-clamp-2">
-                        {analysis.analysis.summary}
+                    {/* Summary */}
+                    {analysis.summary && (
+                      <p className="text-zinc-300 text-sm leading-relaxed">
+                        {analysis.summary}
                       </p>
                     )}
 
-                    <div className="flex items-center space-x-3">
+                    {/* Quick Stats Grid */}
+                    {analysis.quickStats && (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-3 border-y border-zinc-800">
+                        <div className="text-center">
+                          <div className="flex items-center justify-center space-x-1 mb-1">
+                            <IconUsers className="h-4 w-4 text-blue-400" />
+                            <span className="text-lg font-semibold text-white">
+                              {analysis.quickStats.participantCount}
+                            </span>
+                          </div>
+                          <p className="text-xs text-zinc-400">Participants</p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center space-x-1 mb-1">
+                            <IconCircleCheck className="h-4 w-4 text-purple-400" />
+                            <span className="text-lg font-semibold text-white">
+                              {analysis.quickStats.actionItemCount}
+                            </span>
+                          </div>
+                          <p className="text-xs text-zinc-400">Action Items</p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center space-x-1 mb-1">
+                            {getSentimentIcon(analysis.quickStats.sentiment)}
+                            <span className={`text-lg font-semibold ${getSentimentColor(analysis.quickStats.sentiment)}`}>
+                              {Math.round((analysis.quickStats.sentimentScore || 0.5) * 100)}%
+                            </span>
+                          </div>
+                          <p className="text-xs text-zinc-400 capitalize">{analysis.quickStats.sentiment} tone</p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center space-x-1 mb-1">
+                            <IconStar className="h-4 w-4 text-orange-400" />
+                            <span className="text-lg font-semibold text-white">
+                              {analysis.quickStats.collaborationScore || 'N/A'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-zinc-400">Collaboration</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Key Points Preview */}
+                    {analysis.quickStats?.keyPointsPreview && analysis.quickStats.keyPointsPreview.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium text-zinc-300 flex items-center space-x-1">
+                          <IconTarget className="h-4 w-4" />
+                          <span>Key Highlights</span>
+                        </h4>
+                        <ul className="space-y-1">
+                          {analysis.quickStats.keyPointsPreview.map((point, index) => (
+                            <li key={index} className="flex items-start space-x-2 text-sm text-zinc-400">
+                              <div className="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                              <span>{point}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Action Items Summary */}
+                    {analysis.quickStats?.highPriorityActions > 0 && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <div className="flex items-center space-x-1 text-red-400">
+                          <IconTarget className="h-4 w-4" />
+                          <span className="font-medium">{analysis.quickStats.highPriorityActions}</span>
+                        </div>
+                        <span className="text-zinc-400">high priority action{analysis.quickStats.highPriorityActions !== 1 ? 's' : ''} require attention</span>
+                      </div>
+                    )}
+
+                    {/* View Button */}
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="text-xs text-zinc-500">
+                        Click to view detailed analysis with charts and insights
+                      </div>
                       <Button
-                        variant="outline"
-                        size="sm"
                         onClick={() => router.push(`/dashboard/analyses/${analysis._id}`)}
-                        className="border-zinc-700 text-white hover:bg-zinc-800"
+                        className="bg-green-600 hover:bg-green-700 text-black font-medium px-6"
                       >
                         <IconEye className="mr-2 h-4 w-4" />
                         View Analysis
                       </Button>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
     </div>

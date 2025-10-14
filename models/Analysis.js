@@ -20,22 +20,73 @@ const AnalysisSchema = new mongoose.Schema({
     actionItems: [{
       task: String,
       assignee: String,
-      deadline: String
+      deadline: String,
+      priority: String,
+      category: String
     }],
-    decisions: [String],
+    decisions: [{
+      decision: String,
+      impact: String,
+      category: String
+    }],
     sentiment: {
       overall: String,
       score: Number,
-      reasoning: String
+      reasoning: String,
+      timeline: [{
+        time: String,
+        sentiment: String,
+        score: Number
+      }]
     },
     speakers: [{
       name: String,
-      talkTime: String,
-      keyContributions: [String]
+      talkTime: mongoose.Schema.Types.Mixed, // Can be string or number
+      talkTimePercentage: String,
+      keyContributions: [String],
+      engagementLevel: String,
+      topics: [String]
     }],
     nextSteps: [String],
-    risks: [String],
-    opportunities: [String]
+    risks: [{
+      risk: String,
+      severity: String,
+      likelihood: String,
+      mitigation: String
+    }],
+    opportunities: [{
+      opportunity: String,
+      impact: String,
+      effort: String,
+      timeline: String
+    }],
+    meetingMetrics: {
+      duration: String,
+      participationBalance: String,
+      topicCoverage: [String],
+      questionToStatementRatio: Number,
+      interruptionCount: Number,
+      agreementLevel: String
+    },
+    aiRecommendations: {
+      meetingEffectiveness: String,
+      improvementAreas: [String],
+      strengths: [String],
+      actionPriority: [String],
+      followUpSuggestions: [String],
+      communicationInsights: String
+    },
+    topicBreakdown: [{
+      topic: String,
+      timeSpent: Number,
+      importance: String
+    }],
+    engagementMetrics: {
+      overallEngagement: String,
+      mostEngagedSpeaker: String,
+      quietParticipants: [String],
+      collaborationScore: Number
+    }
   },
   status: {
     type: String,
@@ -58,4 +109,5 @@ AnalysisSchema.pre('save', function(next) {
   next()
 })
 
-export default mongoose.models.Analysis || mongoose.model('Analysis', AnalysisSchema)
+
+export default mongoose.model('Analysis', AnalysisSchema)

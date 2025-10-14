@@ -6,29 +6,20 @@ import Analysis from '@/models/Analysis'
 import { authOptions } from '../auth/[...nextauth]/route'
 
 export async function GET(request) {
-  console.log('🔍 [API] /api/analyses - Starting request...')
-
   try {
     // Check authentication
-    console.log('🔐 [API] Checking authentication...')
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.email) {
-      console.log('❌ [API] No session or email found')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('✅ [API] Authenticated user:', session.user.email)
-
     // Connect to database
-    console.log('🗄️ [API] Connecting to database...')
     await connectDB()
 
     const user = await User.findOne({ email: session.user.email })
-    console.log('👤 [API] User found:', user ? `ID: ${user._id}, Email: ${user.email}` : 'null')
 
     if (!user) {
-      console.log('❌ [API] User not found in database')
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
@@ -38,23 +29,40 @@ export async function GET(request) {
     const page = parseInt(searchParams.get('page')) || 1
     const skip = (page - 1) * limit
 
-    console.log('📊 [API] Query params - limit:', limit, 'page:', page, 'skip:', skip)
-
-    // Fetch user's analyses
-    console.log('🔎 [API] Searching for analyses for user ID:', user._id.toString())
+    // Fetch user's analyses with minimal data for list view
     const analyses = await Analysis.find({ userId: user._id })
-      .select('title createdAt status analysis.summary')
+      .select('title createdAt status analysis.summary analysis.sentiment.overall analysis.sentiment.score analysis.speakers analysis.actionItems analysis.meetingMetrics.duration analysis.aiRecommendations.meetingEffectiveness analysis.engagementMetrics.collaborationScore analysis.keyPoints')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
 
     const total = await Analysis.countDocuments({ userId: user._id })
 
-    console.log('📈 [API] Found', analyses.length, 'analyses out of', total, 'total')
-    console.log('📋 [API] Analysis IDs:', analyses.map(a => a._id.toString()))
+    // Create clean preview data for list view
+    const analysisPreview = analyses.map(analysis => {
+      const analysisData = analysis.analysis || {}
+      return {
+        _id: analysis._id,
+        title: analysis.title,
+        status: analysis.status,
+        createdAt: analysis.createdAt,
+        summary: analysisData.summary || 'No summary available',
+        quickStats: {
+          participantCount: analysisData.speakers?.length || 0,
+          actionItemCount: analysisData.actionItems?.length || 0,
+          highPriorityActions: analysisData.actionItems?.filter(item => item.priority === 'high').length || 0,
+          sentiment: analysisData.sentiment?.overall || 'neutral',
+          sentimentScore: analysisData.sentiment?.score || 0.5,
+          meetingEffectiveness: analysisData.aiRecommendations?.meetingEffectiveness || 'unknown',
+          collaborationScore: analysisData.engagementMetrics?.collaborationScore || null,
+          duration: analysisData.meetingMetrics?.duration || 'Unknown',
+          keyPointsPreview: analysisData.keyPoints?.slice(0, 3) || []
+        }
+      }
+    })
 
     const response = {
-      analyses,
+      analyses: analysisPreview,
       pagination: {
         total,
         page,
@@ -63,12 +71,9 @@ export async function GET(request) {
       }
     }
 
-    console.log('✅ [API] Returning response:', JSON.stringify(response, null, 2))
     return NextResponse.json(response)
 
   } catch (error) {
-    console.error('❌ [API] Fetch analyses error:', error)
-    console.error('❌ [API] Error stack:', error.stack)
     return NextResponse.json(
       { error: 'Failed to fetch analyses' },
       { status: 500 }
