@@ -7,14 +7,12 @@ import { authOptions } from '../auth/[...nextauth]/route'
 
 export async function GET(request) {
   try {
-    // Check authentication
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Connect to database
     await connectDB()
 
     const user = await User.findOne({ email: session.user.email })
@@ -23,13 +21,10 @@ export async function GET(request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Get query parameters
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit')) || 10
     const page = parseInt(searchParams.get('page')) || 1
     const skip = (page - 1) * limit
-
-    // Fetch user's analyses with minimal data for list view
     const analyses = await Analysis.find({ userId: user._id })
       .select('title createdAt status analysis.summary analysis.sentiment.overall analysis.sentiment.score analysis.speakers analysis.actionItems analysis.meetingMetrics.duration analysis.aiRecommendations.meetingEffectiveness analysis.engagementMetrics.collaborationScore analysis.keyPoints')
       .sort({ createdAt: -1 })
@@ -38,7 +33,6 @@ export async function GET(request) {
 
     const total = await Analysis.countDocuments({ userId: user._id })
 
-    // Create clean preview data for list view
     const analysisPreview = analyses.map(analysis => {
       const analysisData = analysis.analysis || {}
       return {

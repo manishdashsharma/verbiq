@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { IconUpload, IconLoader2, IconFileText, IconSquareRoundedX } from '@tabler/icons-react'
+import { IconUpload, IconLoader2, IconFileText, IconSquareRoundedX, IconSparkles, IconBrain, IconWaveSquare } from '@tabler/icons-react'
 import { MultiStepLoader } from '@/components/ui/multi-step-loader'
+import AudioUpload from '@/components/ui/audio-upload'
 
 export default function UploadPage() {
   const { data: session } = useSession()
@@ -16,6 +17,7 @@ export default function UploadPage() {
   const [transcript, setTranscript] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [error, setError] = useState('')
+  const [transcriptMetadata, setTranscriptMetadata] = useState(null)
 
   // VerbIQ-specific loading states for the multi-step loader
   const loadingStates = [
@@ -110,6 +112,7 @@ export default function UploadPage() {
       const reader = new FileReader()
       reader.onload = (e) => {
         setTranscript(e.target.result)
+        setTranscriptMetadata({ source: 'text', filename: file.name })
       }
       reader.readAsText(file)
     } else {
@@ -117,83 +120,114 @@ export default function UploadPage() {
     }
   }
 
+  const handleAudioTranscript = (transcriptText, metadata = {}) => {
+    setTranscript(transcriptText)
+    setTranscriptMetadata(metadata)
+    setError('')
+  }
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Upload Transcript</h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">New Analysis</h1>
         <p className="text-zinc-400">
-          Upload or paste your meeting transcript for AI-powered analysis
+          Upload audio, import text file, or paste your meeting transcript to get started
         </p>
       </div>
 
-      <Card className="bg-zinc-900 border-zinc-800">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <IconFileText className="h-5 w-5 text-green-600" />
-            Meeting Transcript
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <Label htmlFor="file-upload" className="text-zinc-300 mb-2 block">
-              Upload Text File (Optional)
-            </Label>
-            <input
-              id="file-upload"
-              type="file"
-              accept=".txt"
-              onChange={handleFileUpload}
-              className="block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-green-600 file:text-black hover:file:bg-green-700"
-            />
-          </div>
+      <div className="space-y-6">
+        <AudioUpload
+          onTranscriptReceived={handleAudioTranscript}
+          disabled={isAnalyzing}
+        />
 
-          <div>
-            <Label htmlFor="transcript" className="text-zinc-300 mb-2 block">
-              Transcript Text
-            </Label>
-            <Textarea
-              id="transcript"
-              value={transcript}
-              onChange={(e) => setTranscript(e.target.value)}
-              placeholder="Paste your meeting transcript here..."
-              className="min-h-[300px] bg-zinc-800 border-zinc-700 text-white"
-            />
+        <div className="flex items-center justify-center">
+          <div className="flex items-center gap-4 text-zinc-500">
+            <div className="h-px w-20 bg-zinc-700"></div>
+            <span className="text-sm font-medium">OR</span>
+            <div className="h-px w-20 bg-zinc-700"></div>
           </div>
+        </div>
 
-          {error && (
-            <div className="p-3 bg-red-900/50 border border-red-700 rounded-md">
-              <p className="text-red-300 text-sm">{error}</p>
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-white">
+              <IconFileText className="h-5 w-5 text-green-600" />
+              Transcript Input
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="file-upload" className="text-zinc-300 mb-2 block">
+                Upload Text File (Optional)
+              </Label>
+              <input
+                id="file-upload"
+                type="file"
+                accept=".txt"
+                onChange={handleFileUpload}
+                className="block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-green-600 file:text-black hover:file:bg-green-700"
+              />
             </div>
-          )}
 
-          <div className="flex justify-between items-center">
-            <div className="text-sm text-zinc-400">
-              {transcript.length} characters
+            <div>
+              <Label htmlFor="transcript" className="text-zinc-300 mb-2 block">
+                Meeting Transcript
+              </Label>
+              <Textarea
+                id="transcript"
+                value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
+                placeholder="Paste your meeting transcript here...
+
+Speaker 1: Good morning everyone, thank you for joining today's meeting...
+Speaker 2: Thanks for having me. I wanted to discuss our quarterly results..."
+                className="min-h-[300px] bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
+              />
             </div>
-            <Button
-              onClick={() => {
-                console.log('🖱️ [UPLOAD] Button clicked! Transcript exists:', !!transcript.trim())
-                console.log('🔒 [UPLOAD] Button disabled?', isAnalyzing || !transcript.trim())
-                handleAnalyze()
-              }}
-              disabled={isAnalyzing || !transcript.trim()}
-              className="bg-green-600 hover:bg-green-700 text-black font-semibold"
-            >
-              {isAnalyzing ? (
-                <>
-                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <IconUpload className="mr-2 h-4 w-4" />
-                  Analyze Transcript
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+
+            {error && (
+              <div className="p-3 bg-red-900/50 border border-red-700 rounded-md">
+                <p className="text-red-300 text-sm">{error}</p>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-zinc-400">
+                {transcript.length} characters
+                {transcriptMetadata && (
+                  <span className="ml-2 text-green-400">
+                    • {transcriptMetadata.source === 'audio' ? '🎤' : '📄'} {transcriptMetadata.filename}
+                    {transcriptMetadata.language && ` • ${transcriptMetadata.language}`}
+                    {transcriptMetadata.confidence && ` • ${Math.round(transcriptMetadata.confidence * 100)}% confidence`}
+                  </span>
+                )}
+              </div>
+              <Button
+                onClick={() => {
+                  console.log('🖱️ [UPLOAD] Button clicked! Transcript exists:', !!transcript.trim())
+                  console.log('🔒 [UPLOAD] Button disabled?', isAnalyzing || !transcript.trim())
+                  handleAnalyze()
+                }}
+                disabled={isAnalyzing || !transcript.trim()}
+                className="bg-green-600 hover:bg-green-700 text-black font-semibold"
+              >
+                {isAnalyzing ? (
+                  <>
+                    <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <IconUpload className="mr-2 h-4 w-4" />
+                    Analyze Transcript
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Multi-step loader for analysis process */}
       <MultiStepLoader

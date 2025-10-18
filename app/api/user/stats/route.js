@@ -6,24 +6,19 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function GET(request) {
   try {
-    // Check authentication
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Connect to database
     await connectDB();
 
-    // Find user
     const user = await User.findOne({ email: session.user.email });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-
-    // Return fresh user stats
     return NextResponse.json({
       success: true,
       stats: {

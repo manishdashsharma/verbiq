@@ -16,7 +16,9 @@ import {
   IconEye,
   IconSparkles,
   IconBolt,
-  IconTarget
+  IconTarget,
+  IconMicrophone,
+  IconWaveSquare
 } from "@tabler/icons-react";
 
 export default function Home() {
@@ -49,13 +51,13 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
             Transform Meeting
             <br />
-            <span className="text-green-600">Transcripts</span> into
+            <span className="text-green-600">Audio & Transcripts</span> into
             <br />
             <Cover>Actionable Insights</Cover>
           </h1>
           <p className="text-xl text-zinc-400 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Analyze your meeting recordings and transcripts with AI-powered intelligence.
-            Extract key decisions, action items, and insights in seconds.
+            Upload audio files or transcripts and get AI-powered analysis.
+            Extract key decisions, action items, and insights in seconds with automated transcription.
           </p>
           <Button
             size="lg"
@@ -74,10 +76,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Powerful <span className="text-green-600">Analysis</span> Features
+              Powerful <span className="text-green-600">AI-Powered</span> Features
             </h2>
             <p className="text-xl text-zinc-400 max-w-3xl mx-auto">
-              Transform your meeting recordings into actionable insights with our cutting-edge AI technology
+              From audio to insights - transform your meetings with automated transcription and intelligent analysis
             </p>
           </div>
 
@@ -99,6 +101,26 @@ export default function Home() {
                 </p>
 
                 <Meteors number={15} />
+              </div>
+            </div>
+
+            {/* Audio Transcription Card */}
+            <div className="relative">
+              <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-blue-600/20 blur-3xl" />
+              <div className="relative flex h-full flex-col items-start justify-end overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm px-6 py-8 shadow-xl min-h-[320px]">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-800">
+                  <IconMicrophone className="h-6 w-6 text-green-600" />
+                </div>
+
+                <h3 className="relative z-50 mb-4 text-xl font-bold text-white">
+                  Audio Transcription
+                </h3>
+
+                <p className="relative z-50 mb-6 text-base font-normal text-zinc-400">
+                  Upload MP3, WAV, or any audio file and get accurate automated transcription powered by advanced speech recognition technology.
+                </p>
+
+                <Meteors number={14} />
               </div>
             </div>
 
@@ -218,7 +240,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-3">1. Upload</h3>
               <p className="text-zinc-400">
-                Upload your meeting recording or paste the transcript directly into VerbIQ.
+                Upload audio files (MP3, WAV, M4A), text files, or paste transcripts directly into VerbIQ.
               </p>
             </div>
 
@@ -226,9 +248,9 @@ export default function Home() {
               <div className="bg-green-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <IconBrain className="h-8 w-8 text-black" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">2. Analyze</h3>
+              <h3 className="text-xl font-semibold mb-3">2. Transcribe & Analyze</h3>
               <p className="text-zinc-400">
-                Our AI processes your content and extracts key insights, decisions, and action items.
+                Audio files are automatically transcribed, then our AI extracts insights, decisions, and action items.
               </p>
             </div>
 
@@ -286,7 +308,7 @@ export default function Home() {
                       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-600/20 mr-3">
                         <IconCheck className="h-4 w-4 text-green-400" />
                       </div>
-                      <span className="text-white font-medium">AI-powered summaries</span>
+                      <span className="text-white font-medium">Audio transcription & AI summaries</span>
                     </li>
                     <li className="flex items-center">
                       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-600/20 mr-3">

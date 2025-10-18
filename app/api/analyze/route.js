@@ -12,7 +12,6 @@ const openai = new OpenAI({
 
 export async function POST(request) {
   try {
-    // Check if OpenAI API key is configured
     if (!process.env.OPENAI_API_KEY) {
       console.error("OpenAI API key not found in environment variables");
       return NextResponse.json(
@@ -21,14 +20,12 @@ export async function POST(request) {
       );
     }
 
-    // Check authentication
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get transcript and title from request body
     const { transcript, title } = await request.json();
 
     if (!transcript || transcript.trim().length === 0) {
@@ -40,7 +37,6 @@ export async function POST(request) {
 
     const analysisTitle = title || `Meeting Analysis - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
 
-    // Connect to database and check user limits
     await connectDB();
     const user = await User.findOne({ email: session.user.email });
 
@@ -56,8 +52,6 @@ export async function POST(request) {
         { status: 403 }
       );
     }
-
-    // Analyze transcript with OpenAI
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -163,31 +157,25 @@ export async function POST(request) {
     let analysis;
 
     try {
-      // Multiple cleaning attempts for robust parsing
       let cleanedText = analysisText.trim()
 
-      // Remove markdown code blocks
       if (cleanedText.startsWith('```json')) {
         cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '')
       } else if (cleanedText.startsWith('```')) {
         cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '')
       }
 
-      // Remove any leading/trailing non-JSON content
       const jsonMatch = cleanedText.match(/\{[\s\S]*\}/)
       if (jsonMatch) {
         cleanedText = jsonMatch[0]
       }
 
-      // Fix common JSON formatting issues
       cleanedText = cleanedText
-        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
-        .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
-        .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":') // Add quotes to unquoted keys
+        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+        .replace(/,(\s*[}\]])/g, '$1')
+        .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":')
 
       analysis = JSON.parse(cleanedText);
-
-      // Validate required fields and provide defaults
       analysis = {
         summary: analysis.summary || "Meeting analysis completed successfully.",
         keyPoints: Array.isArray(analysis.keyPoints) ? analysis.keyPoints : [],
@@ -205,7 +193,6 @@ export async function POST(request) {
       };
 
     } catch (parseError) {
-      // Fallback: Create a basic analysis structure with the raw content
       analysis = {
         summary: "Analysis completed. Raw response could not be parsed as structured data.",
         keyPoints: [analysisText.substring(0, 200) + "..."],
@@ -230,7 +217,6 @@ export async function POST(request) {
       };
     }
 
-    // Save analysis to database
     const savedAnalysis = await Analysis.create({
       userId: user._id,
       title: analysisTitle,
@@ -239,7 +225,6 @@ export async function POST(request) {
       status: 'completed'
     });
 
-    // Update user's analysis count
     user.analysesUsed += 1;
     await user.save();
 
@@ -254,7 +239,6 @@ export async function POST(request) {
       },
     };
 
-    // Return analysis results
     return NextResponse.json(responseData);
   } catch (error) {
     if (error.code === "insufficient_quota") {
@@ -266,7 +250,6 @@ export async function POST(request) {
       );
     }
 
-    // Check for OpenAI API errors
     if (error.response) {
       return NextResponse.json(
         {
@@ -276,7 +259,6 @@ export async function POST(request) {
       );
     }
 
-    // Check for network/connection errors
     if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
       return NextResponse.json(
         {
@@ -286,7 +268,6 @@ export async function POST(request) {
       );
     }
 
-    // Generic error with more context
     return NextResponse.json(
       {
         error: `Failed to analyze transcript: ${error.message || 'Unknown error'}`,

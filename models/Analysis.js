@@ -110,4 +110,4 @@ AnalysisSchema.pre('save', function(next) {
 })
 
 
-export default mongoose.model('Analysis', AnalysisSchema)
+export default mongoose.models.Analysis || mongoose.model('Analysis', AnalysisSchema)
