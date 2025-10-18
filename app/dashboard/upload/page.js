@@ -127,25 +127,25 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">New Analysis</h1>
-        <p className="text-zinc-400">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">New Analysis</h1>
+        <p className="text-sm sm:text-base text-zinc-400">
           Upload audio, import text file, or paste your meeting transcript to get started
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <AudioUpload
           onTranscriptReceived={handleAudioTranscript}
           disabled={isAnalyzing}
         />
 
-        <div className="flex items-center justify-center">
-          <div className="flex items-center gap-4 text-zinc-500">
-            <div className="h-px w-20 bg-zinc-700"></div>
-            <span className="text-sm font-medium">OR</span>
-            <div className="h-px w-20 bg-zinc-700"></div>
+        <div className="flex items-center justify-center px-4">
+          <div className="flex items-center gap-2 sm:gap-4 text-zinc-500">
+            <div className="h-px w-12 sm:w-20 bg-zinc-700"></div>
+            <span className="text-xs sm:text-sm font-medium">OR</span>
+            <div className="h-px w-12 sm:w-20 bg-zinc-700"></div>
           </div>
         </div>
 
@@ -182,7 +182,7 @@ export default function UploadPage() {
 
 Speaker 1: Good morning everyone, thank you for joining today's meeting...
 Speaker 2: Thanks for having me. I wanted to discuss our quarterly results..."
-                className="min-h-[300px] bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
+                className="min-h-[250px] sm:min-h-[300px] bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 text-sm sm:text-base"
               />
             </div>
 
@@ -192,7 +192,7 @@ Speaker 2: Thanks for having me. I wanted to discuss our quarterly results..."
               </div>
             )}
 
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
               <div className="text-sm text-zinc-400">
                 {transcript.length} characters
                 {transcriptMetadata && (

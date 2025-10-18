@@ -36,7 +36,7 @@ export default function Settings() {
   const analysesLimit = session?.user?.analysesLimit || 5
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-white mb-2">Settings</h1>
@@ -127,7 +127,7 @@ export default function Settings() {
                   </li>
                   <li className="flex items-center text-sm text-zinc-400">
                     <IconCheck className="h-4 w-4 text-green-500 mr-2" />
-                    Basic summaries
+                    Audio transcription & AI summaries
                   </li>
                   <li className="flex items-center text-sm text-zinc-400">
                     <IconCheck className="h-4 w-4 text-green-500 mr-2" />

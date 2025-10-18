@@ -21,8 +21,9 @@ export default function Terms() {
                 asChild
               >
                 <Link href="/">
-                  <IconArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Home
+                  <IconArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Back to Home</span>
+                  <span className="sm:hidden">Back</span>
                 </Link>
               </Button>
             </nav>
@@ -30,19 +31,19 @@ export default function Terms() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">Terms of Service</h1>
-          <p className="text-zinc-400 text-lg">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 sm:mb-4">Terms of Service</h1>
+          <p className="text-zinc-400 text-base sm:text-lg">
             Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
 
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardContent className="p-8 space-y-8">
+          <CardContent className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">1. Acceptance of Terms</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">1. Acceptance of Terms</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 By accessing and using VerbIQ (&quot;the Service&quot;), operated by Manish Dash Sharma (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;),
                 you accept and agree to be bound by the terms and provision of this agreement. If you do not agree
                 to abide by the above, please do not use this service.
@@ -50,8 +51,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">2. Description of Service</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">2. Description of Service</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 VerbIQ is an AI-powered meeting intelligence platform that transforms meeting recordings and
                 transcripts into actionable insights. Our service includes automated transcription, AI analysis,
                 action item extraction, sentiment analysis, and comprehensive meeting analytics.
@@ -59,9 +60,9 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">3. User Accounts</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">3. User Accounts</h2>
               <div className="space-y-4">
-                <p className="text-zinc-300 leading-relaxed">
+                <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                   To use VerbIQ, you must create an account using a supported authentication provider
                   (GitHub, Google). You are responsible for:
                 </p>
@@ -87,9 +88,9 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">4. Acceptable Use</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">4. Acceptable Use</h2>
               <div className="space-y-4">
-                <p className="text-zinc-300 leading-relaxed">
+                <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                   You agree to use VerbIQ only for lawful purposes and in accordance with these Terms.
                   You agree NOT to:
                 </p>
@@ -123,11 +124,11 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">5. Content and Data</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">5. Content and Data</h2>
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-medium text-green-400 mb-2">Your Content</h3>
-                  <p className="text-zinc-300 leading-relaxed">
+                  <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                     You retain ownership of all content you upload to VerbIQ. By uploading content, you grant
                     us a limited license to process, analyze, and store your content for the purpose of
                     providing our services.
@@ -135,14 +136,14 @@ export default function Terms() {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium text-green-400 mb-2">AI-Generated Content</h3>
-                  <p className="text-zinc-300 leading-relaxed">
+                  <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                     The insights, summaries, and analysis generated by our AI belong to you. However, you
                     acknowledge that AI-generated content may not always be accurate and should be reviewed.
                   </p>
                 </div>
                 <div>
                   <h3 className="text-lg font-medium text-green-400 mb-2">Recording Consent</h3>
-                  <p className="text-zinc-300 leading-relaxed">
+                  <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                     You are solely responsible for ensuring you have proper consent from all meeting
                     participants before uploading recordings to VerbIQ.
                   </p>
@@ -151,9 +152,9 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">6. Usage Limits and Billing</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">6. Usage Limits and Billing</h2>
               <div className="space-y-4">
-                <p className="text-zinc-300 leading-relaxed">
+                <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                   VerbIQ offers a free tier with limited usage and paid plans for additional features.
                   Usage limits are clearly displayed in your account dashboard.
                 </p>
@@ -175,8 +176,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">7. Privacy and Data Protection</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">7. Privacy and Data Protection</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 Your privacy is important to us. Our Privacy Policy, which is incorporated into these
                 Terms by reference, explains how we collect, use, and protect your information.
                 By using VerbIQ, you consent to our Privacy Policy.
@@ -184,8 +185,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">8. Service Availability</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">8. Service Availability</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 We strive to maintain high availability but do not guarantee uninterrupted service.
                 We may temporarily suspend service for maintenance, updates, or technical issues.
                 We are not liable for any damages resulting from service interruptions.
@@ -193,8 +194,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">9. Intellectual Property</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">9. Intellectual Property</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 VerbIQ and its original content, features, and functionality are owned by Manish Dash Sharma
                 and are protected by international copyright, trademark, and other intellectual property laws.
                 You may not copy, modify, or distribute our proprietary technology.
@@ -202,9 +203,9 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">10. Disclaimers and Limitations</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">10. Disclaimers and Limitations</h2>
               <div className="space-y-4">
-                <p className="text-zinc-300 leading-relaxed">
+                <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                   VerbIQ is provided &quot;as is&quot; without warranties of any kind. We disclaim all warranties,
                   express or implied, including but not limited to:
                 </p>
@@ -230,8 +231,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">11. Limitation of Liability</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">11. Limitation of Liability</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 To the maximum extent permitted by law, Manish Dash Sharma shall not be liable for any
                 indirect, incidental, special, consequential, or punitive damages, including but not
                 limited to loss of data, revenue, or profits, arising from your use of VerbIQ.
@@ -239,8 +240,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">12. Termination</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">12. Termination</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 We may terminate or suspend your account at any time for violations of these Terms.
                 You may terminate your account at any time by contacting us. Upon termination,
                 your right to use VerbIQ will cease immediately.
@@ -248,8 +249,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">13. Changes to Terms</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">13. Changes to Terms</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 We reserve the right to modify these Terms at any time. We will notify users of
                 material changes via email or through the service. Continued use after changes
                 constitutes acceptance of the new Terms.
@@ -257,8 +258,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">14. Governing Law</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">14. Governing Law</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 These Terms shall be governed by and construed in accordance with the laws of India,
                 without regard to its conflict of law provisions. Any disputes will be resolved
                 through binding arbitration.
@@ -266,8 +267,8 @@ export default function Terms() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">15. Contact Information</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">15. Contact Information</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 If you have any questions about these Terms of Service, please contact us:
               </p>
               <div className="mt-4 p-4 bg-zinc-800 rounded-lg">

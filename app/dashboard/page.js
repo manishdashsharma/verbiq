@@ -76,19 +76,19 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Welcome Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">
+      <div className="mb-6 sm:mb-8 px-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
           Welcome back, {session?.user?.name?.split(' ')[0]}!
         </h1>
-        <p className="text-zinc-400">
+        <p className="text-sm sm:text-base text-zinc-400">
           Ready to analyze your meeting transcripts?
         </p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-zinc-400">
@@ -147,7 +147,7 @@ export default function Dashboard() {
       {/* Main Action Card */}
       <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
-          <CardTitle className="text-xl text-white">Quick Actions</CardTitle>
+          <CardTitle className="text-lg sm:text-xl text-white">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
@@ -195,14 +195,14 @@ export default function Dashboard() {
       {/* Recent Analyses */}
       <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
-          <CardTitle className="text-xl text-white">Recent Analyses</CardTitle>
+          <CardTitle className="text-lg sm:text-xl text-white">Recent Analyses</CardTitle>
         </CardHeader>
         <CardContent>
           {recentAnalyses.length === 0 ? (
-            <div className="text-center py-8">
-              <IconFileText className="h-12 w-12 text-zinc-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2">No analyses yet</h3>
-              <p className="text-zinc-400 mb-4">
+            <div className="text-center py-6 sm:py-8 px-4">
+              <IconFileText className="h-10 w-10 sm:h-12 sm:w-12 text-zinc-600 mx-auto mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2">No analyses yet</h3>
+              <p className="text-sm sm:text-base text-zinc-400 mb-4">
                 Start by uploading your first meeting transcript or recording.
               </p>
               <Button

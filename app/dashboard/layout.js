@@ -20,7 +20,9 @@ import {
   IconSettings,
   IconLogout,
   IconUser,
-  IconPlus
+  IconPlus,
+  IconMenu2,
+  IconX
 } from '@tabler/icons-react'
 
 export default function DashboardLayout({ children }) {
@@ -28,6 +30,7 @@ export default function DashboardLayout({ children }) {
   const router = useRouter()
   const pathname = usePathname()
   const [analysesUsed, setAnalysesUsed] = useState(0)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -108,12 +111,28 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-zinc-950 border-r border-zinc-800">
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-zinc-950 border-r border-zinc-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex h-16 items-center border-b border-zinc-800 px-6">
+          <div className="flex h-16 items-center justify-between border-b border-zinc-800 px-6">
             <h1 className="text-xl font-bold text-white">VerbIQ</h1>
+            <button
+              className="lg:hidden p-2 rounded-md hover:bg-zinc-800"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <IconX className="h-5 w-5" />
+            </button>
           </div>
 
           {/* Navigation */}
@@ -124,6 +143,7 @@ export default function DashboardLayout({ children }) {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-green-600 text-black'
@@ -204,12 +224,18 @@ export default function DashboardLayout({ children }) {
       </div>
 
       {/* Main Content */}
-      <div className="pl-64">
+      <div className="lg:pl-64 min-h-screen flex flex-col">
         {/* Top Bar */}
-        <div className="sticky top-0 z-40 bg-black border-b border-zinc-800">
-          <div className="flex h-16 items-center justify-between px-6">
+        <div className="sticky top-0 z-40 bg-black border-b border-zinc-800 flex-shrink-0">
+          <div className="flex h-16 items-center justify-between px-4 sm:px-6">
             <div className="flex items-center space-x-4">
-              <h2 className="text-lg font-semibold text-white">
+              <button
+                className="lg:hidden p-2 rounded-md hover:bg-zinc-800"
+                onClick={() => setIsMobileMenuOpen(true)}
+              >
+                <IconMenu2 className="h-5 w-5" />
+              </button>
+              <h2 className="text-base sm:text-lg font-semibold text-white">
                 {pathname === '/dashboard' && 'Dashboard'}
                 {pathname === '/dashboard/analyses' && 'Analyses'}
                 {pathname === '/dashboard/upload' && 'Upload Transcript'}
@@ -220,10 +246,12 @@ export default function DashboardLayout({ children }) {
               {analysesUsed < 5 && (
                 <Button
                   onClick={() => router.push('/dashboard/upload')}
-                  className="bg-green-600 hover:bg-green-700 text-black font-semibold"
+                  className="bg-green-600 hover:bg-green-700 text-black font-semibold px-3 sm:px-4 py-2"
+                  size="sm"
                 >
-                  <IconPlus className="mr-2 h-4 w-4" />
-                  New Analysis
+                  <IconPlus className="mr-1 sm:mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">New Analysis</span>
+                  <span className="sm:hidden">New</span>
                 </Button>
               )}
             </div>
@@ -231,7 +259,7 @@ export default function DashboardLayout({ children }) {
         </div>
 
         {/* Page Content */}
-        <main className="p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
       </div>
     </div>
   )

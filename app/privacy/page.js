@@ -21,8 +21,9 @@ export default function Privacy() {
                 asChild
               >
                 <Link href="/">
-                  <IconArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Home
+                  <IconArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Back to Home</span>
+                  <span className="sm:hidden">Back</span>
                 </Link>
               </Button>
             </nav>
@@ -30,19 +31,19 @@ export default function Privacy() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">Privacy Policy</h1>
-          <p className="text-zinc-400 text-lg">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 sm:mb-4">Privacy Policy</h1>
+          <p className="text-zinc-400 text-base sm:text-lg">
             Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
 
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardContent className="p-8 space-y-8">
+          <CardContent className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">1. Introduction</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">1. Introduction</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 VerbIQ (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) respects your privacy and is committed to protecting your personal data.
                 This privacy policy explains how we collect, use, and protect your information when you use our
                 AI-powered meeting intelligence platform at verbiq.manishdashsharma.site.
@@ -50,25 +51,25 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">2. Information We Collect</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">2. Information We Collect</h2>
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium text-green-400 mb-2">Account Information</h3>
-                  <p className="text-zinc-300 leading-relaxed">
+                  <h3 className="text-base sm:text-lg font-medium text-green-400 mb-2">Account Information</h3>
+                  <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                     When you create an account, we collect your email address, name, and profile information
                     from your chosen authentication provider (GitHub, Google).
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-green-400 mb-2">Meeting Data</h3>
-                  <p className="text-zinc-300 leading-relaxed">
+                  <h3 className="text-base sm:text-lg font-medium text-green-400 mb-2">Meeting Data</h3>
+                  <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                     We process and store the meeting transcripts and audio files you upload for analysis.
                     This includes the original content and the AI-generated insights, summaries, and action items.
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-green-400 mb-2">Usage Information</h3>
-                  <p className="text-zinc-300 leading-relaxed">
+                  <h3 className="text-base sm:text-lg font-medium text-green-400 mb-2">Usage Information</h3>
+                  <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                     We collect information about how you use VerbIQ, including features accessed,
                     analysis requests, and general usage patterns to improve our service.
                   </p>
@@ -77,7 +78,7 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">3. How We Use Your Information</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">3. How We Use Your Information</h2>
               <ul className="space-y-2 text-zinc-300">
                 <li className="flex items-start">
                   <span className="text-green-400 mr-2">•</span>
@@ -103,21 +104,21 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">4. Data Processing and AI</h2>
-              <p className="text-zinc-300 leading-relaxed mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">4. Data Processing and AI</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed mb-4">
                 Your meeting transcripts are processed using OpenAI&apos;s GPT-4 and our self-hosted Whisper
                 transcription service. We implement appropriate technical and organizational measures to
                 protect your data during processing.
               </p>
-              <p className="text-zinc-300 leading-relaxed">
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 Audio files are transcribed on our secure infrastructure and are not shared with third
                 parties beyond the necessary AI processing services.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">5. Data Sharing and Disclosure</h2>
-              <p className="text-zinc-300 leading-relaxed mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">5. Data Sharing and Disclosure</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed mb-4">
                 We do not sell, trade, or otherwise transfer your personal information to third parties,
                 except in the following circumstances:
               </p>
@@ -142,8 +143,8 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">6. Data Security</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">6. Data Security</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 We implement industry-standard security measures to protect your data, including encryption
                 in transit and at rest, secure authentication, and regular security assessments. However,
                 no method of transmission over the internet is 100% secure.
@@ -151,8 +152,8 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">7. Data Retention</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">7. Data Retention</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 We retain your account information and meeting data for as long as your account is active
                 or as needed to provide you services. You may delete your data at any time through your
                 account settings or by contacting us.
@@ -160,8 +161,8 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">8. Your Rights</h2>
-              <p className="text-zinc-300 leading-relaxed mb-4">You have the right to:</p>
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">8. Your Rights</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed mb-4">You have the right to:</p>
               <ul className="space-y-2 text-zinc-300">
                 <li className="flex items-start">
                   <span className="text-green-400 mr-2">•</span>
@@ -187,24 +188,24 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">9. Cookies and Tracking</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">9. Cookies and Tracking</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 We use essential cookies for authentication and session management. We do not use tracking
                 cookies for advertising purposes. You can control cookie settings through your browser.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">10. Updates to This Policy</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">10. Updates to This Policy</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 We may update this privacy policy from time to time. We will notify you of any material
                 changes by posting the new policy on this page and updating the &quot;Last updated&quot; date.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-4">11. Contact Us</h2>
-              <p className="text-zinc-300 leading-relaxed">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">11. Contact Us</h2>
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed">
                 If you have any questions about this privacy policy or our data practices, please contact us:
               </p>
               <div className="mt-4 p-4 bg-zinc-800 rounded-lg">
