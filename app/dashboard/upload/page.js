@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { IconUpload, IconLoader2, IconFileText } from '@tabler/icons-react'
+import { IconUpload, IconLoader2, IconFileText, IconSquareRoundedX } from '@tabler/icons-react'
+import { MultiStepLoader } from '@/components/ui/multi-step-loader'
 
 export default function UploadPage() {
   const { data: session } = useSession()
@@ -15,6 +16,37 @@ export default function UploadPage() {
   const [transcript, setTranscript] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [error, setError] = useState('')
+
+  // VerbIQ-specific loading states for the multi-step loader
+  const loadingStates = [
+    {
+      text: "🔍 Processing your meeting transcript...",
+    },
+    {
+      text: "🧠 Analyzing conversation patterns...",
+    },
+    {
+      text: "👥 Identifying speakers and contributions...",
+    },
+    {
+      text: "💡 Extracting key insights and decisions...",
+    },
+    {
+      text: "🎯 Finding action items and responsibilities...",
+    },
+    {
+      text: "📊 Calculating meeting effectiveness metrics...",
+    },
+    {
+      text: "😊 Analyzing sentiment and engagement levels...",
+    },
+    {
+      text: "🚀 Generating AI recommendations...",
+    },
+    {
+      text: "✨ Finalizing your comprehensive analysis...",
+    },
+  ]
 
   console.log('🎯 [UPLOAD PAGE] Component mounted/rendered')
 
@@ -139,7 +171,7 @@ export default function UploadPage() {
               {transcript.length} characters
             </div>
             <Button
-              onClick={(e) => {
+              onClick={() => {
                 console.log('🖱️ [UPLOAD] Button clicked! Transcript exists:', !!transcript.trim())
                 console.log('🔒 [UPLOAD] Button disabled?', isAnalyzing || !transcript.trim())
                 handleAnalyze()
@@ -162,6 +194,27 @@ export default function UploadPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Multi-step loader for analysis process */}
+      <MultiStepLoader
+        loadingStates={loadingStates}
+        loading={isAnalyzing}
+        duration={2000}
+      />
+
+      {/* Optional: Cancel button when analyzing */}
+      {isAnalyzing && (
+        <button
+          className="fixed top-4 right-4 text-white bg-zinc-800 hover:bg-zinc-700 rounded-lg p-2 z-[120] transition-colors"
+          onClick={() => {
+            setIsAnalyzing(false)
+            setError('Analysis cancelled by user')
+          }}
+          title="Cancel Analysis"
+        >
+          <IconSquareRoundedX className="h-6 w-6" />
+        </button>
+      )}
     </div>
   )
 }
