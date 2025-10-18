@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { IconBrandGoogle, IconBrandGithub, IconSparkles, IconLock, IconTrendingUp } from '@tabler/icons-react'
+import {  IconBrandGithub, IconSparkles, IconLock, IconTrendingUp } from '@tabler/icons-react'
 import Link from 'next/link'
 
 export default function SignIn() {
@@ -78,25 +78,7 @@ export default function SignIn() {
               Sign in to unlock powerful meeting insights
             </p>
           </CardHeader>
-          <CardContent className="space-y-3 p-5">
-            <Button
-              onClick={() => handleSignIn('google')}
-              disabled={loading}
-              className="w-full bg-white hover:bg-gray-100 text-black font-semibold py-3 text-base transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] group"
-            >
-              <IconBrandGoogle className="mr-3 h-5 w-5 group-hover:scale-110 transition-transform" />
-              {loadingProvider === 'google' ? 'Signing in...' : 'Continue with Google'}
-            </Button>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-zinc-700"></span>
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-zinc-900 px-2 text-zinc-500">Or</span>
-              </div>
-            </div>
-
+          <CardContent className="space-y-4 p-5">
             <Button
               onClick={() => handleSignIn('github')}
               disabled={loading}
