@@ -4,6 +4,7 @@ import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-w
 import { Button } from "@/components/ui/button";
 import { Cover } from "@/components/ui/cover";
 import { Meteors } from "@/components/ui/meteors";
+import Image from 'next/image';
 import {
   IconFileText,
   IconBrain,
@@ -420,6 +421,14 @@ export default function Home() {
               <p className="text-zinc-400 max-w-md">
                 Transform your meeting transcripts into actionable insights with AI-powered analysis.
               </p>
+              <Image
+                src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fverbiq.manishdashsharma.site%2F&labelColor=%2337d67a&countColor=%23555555&style=flat-square"
+                alt="Visitor Count"
+                width={80}
+                height={20}
+                className="mt-2"
+                unoptimized
+              />
             </div>
             <div>
               <h4 className="font-semibold mb-3">Product</h4>
