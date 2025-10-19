@@ -4,7 +4,19 @@ import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-w
 import { Button } from "@/components/ui/button";
 import { Cover } from "@/components/ui/cover";
 import { Meteors } from "@/components/ui/meteors";
+import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+import FeedbackButton from "@/components/ui/feedback-button";
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   IconFileText,
   IconBrain,
@@ -19,10 +31,40 @@ import {
   IconBolt,
   IconTarget,
   IconMicrophone,
-  IconWaveSquare
+  IconWaveSquare,
+  IconUser,
+  IconSettings,
+  IconLogout,
+  IconDashboard
 } from "@tabler/icons-react";
 
 export default function Home() {
+  const { data: session } = useSession()
+  const [feedbacks, setFeedbacks] = useState([])
+
+  useEffect(() => {
+    fetchFeedbacks()
+  }, [])
+
+  const fetchFeedbacks = async () => {
+    try {
+      const response = await fetch('/api/feedback')
+      if (response.ok) {
+        const data = await response.json()
+        const testimonials = data.feedbacks
+          .filter(f => f.type === 'feedback' && f.stars >= 4)
+          .map(f => ({
+            quote: f.feedbackText,
+            name: f.userId?.name || 'VerbIQ User',
+            title: `⭐ ${f.stars}/5 stars`
+          }))
+        setFeedbacks(testimonials)
+      }
+    } catch (error) {
+      console.error('Failed to fetch feedback:', error)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
@@ -33,13 +75,61 @@ export default function Home() {
               <h1 className="text-xl font-bold text-white">VerbIQ</h1>
             </div>
             <nav>
-              <Button
-                variant="outline"
-                className="border-zinc-800 text-white hover:bg-zinc-900"
-                onClick={() => window.location.href = '/auth/signin'}
-              >
-                Sign In
-              </Button>
+              {session ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={session.user?.image} alt={session.user?.name} />
+                        <AvatarFallback className="bg-green-600 text-black">
+                          {session.user?.name?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56 bg-zinc-900 border-zinc-700" align="end">
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium text-white">{session.user?.name}</p>
+                        <p className="w-[200px] truncate text-sm text-zinc-400">
+                          {session.user?.email}
+                        </p>
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator className="bg-zinc-700" />
+                    <DropdownMenuItem
+                      className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer"
+                      onClick={() => window.location.href = '/dashboard'}
+                    >
+                      <IconDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer"
+                      onClick={() => window.location.href = '/dashboard/settings'}
+                    >
+                      <IconSettings className="mr-2 h-4 w-4" />
+                      Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-zinc-700" />
+                    <DropdownMenuItem
+                      className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer"
+                      onClick={() => signOut({ callbackUrl: '/' })}
+                    >
+                      <IconLogout className="mr-2 h-4 w-4" />
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="border-zinc-800 text-white hover:bg-zinc-900"
+                  onClick={() => window.location.href = '/auth/signin'}
+                >
+                  Sign In
+                </Button>
+              )}
             </nav>
           </div>
         </div>
@@ -85,184 +175,264 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* AI-Powered Analysis Card */}
-            <div className="relative">
-              <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-green-600/20 blur-3xl" />
-              <div className="relative flex h-full flex-col items-start justify-end overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm px-4 sm:px-6 py-6 sm:py-8 shadow-xl min-h-[280px] sm:min-h-[320px]">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-800">
-                  <IconBrain className="h-6 w-6 text-green-600" />
+            <div className="group relative">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-8 border border-zinc-800/50 group-hover:border-green-500/30 transition-all duration-300 h-full">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center mb-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-green-600 rounded-xl blur-md opacity-50"></div>
+                      <div className="relative bg-gradient-to-br from-green-500 to-green-600 p-3 rounded-xl">
+                        <IconBrain className="h-8 w-8 text-black" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-xl font-bold text-white group-hover:text-green-400 transition-colors">
+                        AI-Powered Analysis
+                      </h3>
+                      <div className="w-12 h-0.5 bg-gradient-to-r from-green-500 to-transparent mt-1"></div>
+                    </div>
+                  </div>
+
+                  <p className="text-zinc-300 leading-relaxed flex-grow">
+                    Advanced AI extracts key insights, decisions, and action items from your meeting transcripts with unprecedented accuracy.
+                  </p>
+
+                  <div className="mt-6 flex items-center text-green-400 font-medium group-hover:text-green-300 transition-colors">
+                    <span className="text-sm">Smart Recognition</span>
+                    <IconArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-
-                <h3 className="relative z-50 mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-white">
-                  AI-Powered Analysis
-                </h3>
-
-                <p className="relative z-50 mb-4 sm:mb-6 text-sm sm:text-base font-normal text-zinc-400">
-                  Advanced AI extracts key insights, decisions, and action items from your meeting transcripts automatically with unprecedented accuracy.
-                </p>
-
-                <Meteors number={15} />
               </div>
             </div>
 
             {/* Audio Transcription Card */}
-            <div className="relative">
-              <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-blue-600/20 blur-3xl" />
-              <div className="relative flex h-full flex-col items-start justify-end overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm px-4 sm:px-6 py-6 sm:py-8 shadow-xl min-h-[280px] sm:min-h-[320px]">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-800">
-                  <IconMicrophone className="h-6 w-6 text-green-600" />
+            <div className="group relative">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-8 border border-zinc-800/50 group-hover:border-blue-500/30 transition-all duration-300 h-full">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center mb-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-blue-600 rounded-xl blur-md opacity-50"></div>
+                      <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl">
+                        <IconMicrophone className="h-8 w-8 text-white" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                        Audio Transcription
+                      </h3>
+                      <div className="w-12 h-0.5 bg-gradient-to-r from-blue-500 to-transparent mt-1"></div>
+                    </div>
+                  </div>
+
+                  <p className="text-zinc-300 leading-relaxed flex-grow">
+                    Upload MP3, WAV, or any audio file and get accurate automated transcription powered by advanced speech recognition.
+                  </p>
+
+                  <div className="mt-6 flex items-center text-blue-400 font-medium group-hover:text-blue-300 transition-colors">
+                    <span className="text-sm">Voice to Text</span>
+                    <IconWaveSquare className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+                  </div>
                 </div>
-
-                <h3 className="relative z-50 mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-white">
-                  Audio Transcription
-                </h3>
-
-                <p className="relative z-50 mb-4 sm:mb-6 text-sm sm:text-base font-normal text-zinc-400">
-                  Upload MP3, WAV, or any audio file and get accurate automated transcription powered by advanced speech recognition technology.
-                </p>
-
-                <Meteors number={14} />
               </div>
             </div>
 
             {/* Smart Summarization Card */}
-            <div className="relative">
-              <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-zinc-500/20 blur-3xl" />
-              <div className="relative flex h-full flex-col items-start justify-end overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm px-4 sm:px-6 py-6 sm:py-8 shadow-xl min-h-[280px] sm:min-h-[320px]">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-800">
-                  <IconFileText className="h-6 w-6 text-green-600" />
+            <div className="group relative">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-8 border border-zinc-800/50 group-hover:border-purple-500/30 transition-all duration-300 h-full">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center mb-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-purple-600 rounded-xl blur-md opacity-50"></div>
+                      <div className="relative bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-xl">
+                        <IconFileText className="h-8 w-8 text-white" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                        Smart Summarization
+                      </h3>
+                      <div className="w-12 h-0.5 bg-gradient-to-r from-purple-500 to-transparent mt-1"></div>
+                    </div>
+                  </div>
+
+                  <p className="text-zinc-300 leading-relaxed flex-grow">
+                    Get concise, structured summaries that highlight the most important parts of your meetings with intelligent context awareness.
+                  </p>
+
+                  <div className="mt-6 flex items-center text-purple-400 font-medium group-hover:text-purple-300 transition-colors">
+                    <span className="text-sm">Key Insights</span>
+                    <IconSparkles className="ml-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
+                  </div>
                 </div>
-
-                <h3 className="relative z-50 mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-white">
-                  Smart Summarization
-                </h3>
-
-                <p className="relative z-50 mb-4 sm:mb-6 text-sm sm:text-base font-normal text-zinc-400">
-                  Get concise, structured summaries that highlight the most important parts of your meetings with intelligent context awareness.
-                </p>
-
-                <Meteors number={12} />
               </div>
             </div>
 
             {/* Action Items Card */}
-            <div className="relative">
-              <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-green-600/20 blur-3xl" />
-              <div className="relative flex h-full flex-col items-start justify-end overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm px-4 sm:px-6 py-6 sm:py-8 shadow-xl min-h-[280px] sm:min-h-[320px]">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-800">
-                  <IconTarget className="h-6 w-6 text-green-600" />
+            <div className="group relative">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-8 border border-zinc-800/50 group-hover:border-orange-500/30 transition-all duration-300 h-full">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center mb-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-orange-600 rounded-xl blur-md opacity-50"></div>
+                      <div className="relative bg-gradient-to-br from-orange-500 to-orange-600 p-3 rounded-xl">
+                        <IconTarget className="h-8 w-8 text-white" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors">
+                        Action Items & Decisions
+                      </h3>
+                      <div className="w-12 h-0.5 bg-gradient-to-r from-orange-500 to-transparent mt-1"></div>
+                    </div>
+                  </div>
+
+                  <p className="text-zinc-300 leading-relaxed flex-grow">
+                    Automatically extract and organize action items with assignees, deadlines, and track key decisions made during meetings.
+                  </p>
+
+                  <div className="mt-6 flex items-center text-orange-400 font-medium group-hover:text-orange-300 transition-colors">
+                    <span className="text-sm">Task Tracking</span>
+                    <IconTarget className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+                  </div>
                 </div>
-
-                <h3 className="relative z-50 mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-white">
-                  Action Items & Decisions
-                </h3>
-
-                <p className="relative z-50 mb-4 sm:mb-6 text-sm sm:text-base font-normal text-zinc-400">
-                  Automatically extract and organize action items with assignees, deadlines, and track key decisions made during meetings.
-                </p>
-
-                <Meteors number={18} />
               </div>
             </div>
 
             {/* Participant Tracking Card */}
-            <div className="relative">
-              <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-zinc-500/20 blur-3xl" />
-              <div className="relative flex h-full flex-col items-start justify-end overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm px-4 sm:px-6 py-6 sm:py-8 shadow-xl min-h-[280px] sm:min-h-[320px]">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-800">
-                  <IconUsers className="h-6 w-6 text-green-600" />
+            <div className="group relative">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-8 border border-zinc-800/50 group-hover:border-teal-500/30 transition-all duration-300 h-full">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center mb-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-teal-600 rounded-xl blur-md opacity-50"></div>
+                      <div className="relative bg-gradient-to-br from-teal-500 to-teal-600 p-3 rounded-xl">
+                        <IconUsers className="h-8 w-8 text-white" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-xl font-bold text-white group-hover:text-teal-400 transition-colors">
+                        Participant Tracking
+                      </h3>
+                      <div className="w-12 h-0.5 bg-gradient-to-r from-teal-500 to-transparent mt-1"></div>
+                    </div>
+                  </div>
+
+                  <p className="text-zinc-300 leading-relaxed flex-grow">
+                    Identify speakers and track individual contributions throughout the meeting with advanced voice recognition technology.
+                  </p>
+
+                  <div className="mt-6 flex items-center text-teal-400 font-medium group-hover:text-teal-300 transition-colors">
+                    <span className="text-sm">Voice ID</span>
+                    <IconUsers className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+                  </div>
                 </div>
-
-                <h3 className="relative z-50 mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-white">
-                  Participant Tracking
-                </h3>
-
-                <p className="relative z-50 mb-4 sm:mb-6 text-sm sm:text-base font-normal text-zinc-400">
-                  Identify speakers and track individual contributions throughout the meeting with advanced voice recognition technology.
-                </p>
-
-                <Meteors number={10} />
               </div>
             </div>
 
             {/* Instant Search Card */}
-            <div className="relative">
-              <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-green-600/20 blur-3xl" />
-              <div className="relative flex h-full flex-col items-start justify-end overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm px-4 sm:px-6 py-6 sm:py-8 shadow-xl min-h-[280px] sm:min-h-[320px]">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-800">
-                  <IconSearch className="h-6 w-6 text-green-600" />
+            <div className="group relative">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-8 border border-zinc-800/50 group-hover:border-yellow-500/30 transition-all duration-300 h-full">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center mb-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-yellow-600 rounded-xl blur-md opacity-50"></div>
+                      <div className="relative bg-gradient-to-br from-yellow-500 to-yellow-600 p-3 rounded-xl">
+                        <IconSearch className="h-8 w-8 text-black" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors">
+                        Instant Search
+                      </h3>
+                      <div className="w-12 h-0.5 bg-gradient-to-r from-yellow-500 to-transparent mt-1"></div>
+                    </div>
+                  </div>
+
+                  <p className="text-zinc-300 leading-relaxed flex-grow">
+                    Quickly find specific topics, decisions, or action items across all your analyzed meetings with powerful search capabilities.
+                  </p>
+
+                  <div className="mt-6 flex items-center text-yellow-400 font-medium group-hover:text-yellow-300 transition-colors">
+                    <span className="text-sm">Quick Find</span>
+                    <IconBolt className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+                  </div>
                 </div>
-
-                <h3 className="relative z-50 mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-white">
-                  Instant Search
-                </h3>
-
-                <p className="relative z-50 mb-4 sm:mb-6 text-sm sm:text-base font-normal text-zinc-400">
-                  Quickly find specific topics, decisions, or action items across all your analyzed meetings with powerful search capabilities.
-                </p>
-
-
-                <Meteors number={14} />
               </div>
             </div>
 
-            {/* Time Savings Card */}
-            <div className="relative">
-              <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-zinc-500/20 blur-3xl" />
-              <div className="relative flex h-full flex-col items-start justify-end overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm px-4 sm:px-6 py-6 sm:py-8 shadow-xl min-h-[280px] sm:min-h-[320px]">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-800">
-                  <IconClock className="h-6 w-6 text-green-600" />
-                </div>
-
-                <h3 className="relative z-50 mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-white">
-                  Massive Time Savings
-                </h3>
-
-                <p className="relative z-50 mb-4 sm:mb-6 text-sm sm:text-base font-normal text-zinc-400">
-                  Reduce hours of manual note-taking and analysis into minutes of automated insights, saving 90% of your time.
-                </p>
-
-
-                <Meteors number={16} />
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-zinc-950">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12 px-4">How It Works</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="text-center px-4">
-              <div className="bg-green-600 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <IconUpload className="h-6 w-6 sm:h-8 sm:w-8 text-black" />
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-zinc-950">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              How It <span className="text-green-600">Works</span>
+            </h2>
+            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+              Transform your meetings into actionable insights in just three simple steps
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+            {/* Step 1 */}
+            <div className="group text-center relative">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 bg-green-500/20 rounded-full blur-xl scale-150 group-hover:bg-green-500/30 transition-all duration-500"></div>
+                <div className="relative bg-gradient-to-br from-green-500 to-green-600 rounded-full w-20 h-20 flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-all duration-300">
+                  <IconUpload className="h-10 w-10 text-black" />
+                </div>
+                <div className="absolute -top-2 -right-2 bg-green-400 text-black text-xs font-bold px-2 py-1 rounded-full">
+                  01
+                </div>
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">1. Upload</h3>
-              <p className="text-sm sm:text-base text-zinc-400">
-                Upload audio files (MP3, WAV, M4A), text files, or paste transcripts directly into VerbIQ.
+              <h3 className="text-xl font-bold mb-4 text-white group-hover:text-green-400 transition-colors">Upload Your Content</h3>
+              <p className="text-zinc-400 leading-relaxed group-hover:text-zinc-300 transition-colors">
+                Upload audio files (MP3, WAV, M4A), text files, or paste transcripts directly into VerbIQ
               </p>
             </div>
 
-            <div className="text-center px-4">
-              <div className="bg-green-600 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <IconBrain className="h-6 w-6 sm:h-8 sm:w-8 text-black" />
+            {/* Step 2 */}
+            <div className="group text-center relative">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl scale-150 group-hover:bg-blue-500/30 transition-all duration-500"></div>
+                <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 rounded-full w-20 h-20 flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-all duration-300">
+                  <IconBrain className="h-10 w-10 text-white" />
+                </div>
+                <div className="absolute -top-2 -right-2 bg-blue-400 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  02
+                </div>
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">2. Transcribe & Analyze</h3>
-              <p className="text-sm sm:text-base text-zinc-400">
-                Audio files are automatically transcribed, then our AI extracts insights, decisions, and action items.
+              <h3 className="text-xl font-bold mb-4 text-white group-hover:text-blue-400 transition-colors">AI Analysis</h3>
+              <p className="text-zinc-400 leading-relaxed group-hover:text-zinc-300 transition-colors">
+                Audio files are automatically transcribed, then our AI extracts insights, decisions, and action items
               </p>
             </div>
 
-            <div className="text-center px-4">
-              <div className="bg-green-600 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <IconEye className="h-6 w-6 sm:h-8 sm:w-8 text-black" />
+            {/* Step 3 */}
+            <div className="group text-center relative">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-xl scale-150 group-hover:bg-purple-500/30 transition-all duration-500"></div>
+                <div className="relative bg-gradient-to-br from-purple-500 to-purple-600 rounded-full w-20 h-20 flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-all duration-300">
+                  <IconEye className="h-10 w-10 text-white" />
+                </div>
+                <div className="absolute -top-2 -right-2 bg-purple-400 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  03
+                </div>
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">3. Review</h3>
-              <p className="text-sm sm:text-base text-zinc-400">
-                Get organized summaries, action items, and insights ready to share with your team.
+              <h3 className="text-xl font-bold mb-4 text-white group-hover:text-purple-400 transition-colors">Review & Export</h3>
+              <p className="text-zinc-400 leading-relaxed group-hover:text-zinc-300 transition-colors">
+                Get organized summaries, action items, and insights ready to share with your team
               </p>
             </div>
           </div>
@@ -414,6 +584,32 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Customer Testimonials */}
+      {feedbacks.length > 0 && (
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-zinc-950">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                What Our Users <span className="text-green-600">Are Saying</span>
+              </h2>
+              <p className="text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto">
+                Real feedback from teams using VerbIQ to transform their meetings
+              </p>
+            </div>
+
+            <div className="relative">
+              <InfiniteMovingCards
+                items={feedbacks}
+                direction="left"
+                speed="fast"
+                pauseOnHover={true}
+                className="py-4"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-800">
         <div className="max-w-6xl mx-auto">
@@ -444,6 +640,7 @@ export default function Home() {
               <h4 className="font-semibold mb-3">Support</h4>
               <ul className="space-y-2 text-zinc-400">
                 <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+                <li><a href="/status" className="hover:text-white transition-colors">Bug Reports & Features</a></li>
                 <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="/terms" className="hover:text-white transition-colors">Terms of Service</a></li>
               </ul>
@@ -454,6 +651,9 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Floating Feedback Button */}
+      <FeedbackButton />
     </div>
   );
 }

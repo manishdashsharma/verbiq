@@ -14,13 +14,16 @@ import {
   IconTrash,
   IconLogout,
   IconCheck,
-  IconCrown
+  IconCrown,
+  IconMessageCircle
 } from '@tabler/icons-react'
+import FeedbackForm from '@/components/ui/feedback-form'
 
 export default function Settings() {
   const { data: session } = useSession()
   const router = useRouter()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
 
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' })
@@ -184,6 +187,38 @@ export default function Settings() {
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Feedback Section */}
+      <Card className="bg-zinc-900 border-zinc-800">
+        <CardHeader>
+          <CardTitle className="text-lg text-white flex items-center">
+            <IconMessageCircle className="mr-2 h-5 w-5" />
+            Share Your Feedback
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-zinc-400 text-sm">
+            Help us improve VerbIQ by sharing your feedback, reporting bugs, or requesting new features.
+          </p>
+
+          {!showFeedback ? (
+            <Button
+              onClick={() => setShowFeedback(true)}
+              className="bg-green-600 hover:bg-green-700 text-black font-semibold"
+            >
+              <IconMessageCircle className="mr-2 h-4 w-4" />
+              Give Feedback
+            </Button>
+          ) : (
+            <div className="space-y-4">
+              <FeedbackForm
+                onClose={() => setShowFeedback(false)}
+                onSuccess={() => setShowFeedback(false)}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
