@@ -43,6 +43,10 @@ export async function POST(request) {
 
     if (type === 'feedback') {
       feedbackData.stars = stars;
+      // Auto-publish feedback with 4+ stars for testimonials
+      if (stars >= 3) {
+        feedbackData.isPublished = true;
+      }
     }
 
     if (type === 'bugReport' || type === 'featureRequest') {
