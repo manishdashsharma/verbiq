@@ -654,7 +654,8 @@ export default function Home() {
       </section>
 
       {/* Customer Testimonials */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-zinc-950">
+      {feedbacks.length > 0 && (
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-zinc-950">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
@@ -676,6 +677,7 @@ export default function Home() {
             </div>
           </div>
         </section>
+      )}
 
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-800">
